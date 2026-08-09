@@ -30,6 +30,7 @@ class OrderSerializer(serializers.ModelSerializer):
                 order=order,
                 product=item['product'],
                 quantity=item['quantity'],
+                price=item['product'].price,
             )
             for item in products
         ])
