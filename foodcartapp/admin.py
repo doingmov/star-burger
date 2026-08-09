@@ -123,6 +123,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = [
         'id',
         'status',
+        'payment_method'
         'firstname',
         'lastname',
         'phonenumber',
@@ -135,6 +136,7 @@ class OrderAdmin(admin.ModelAdmin):
         'phonenumber',
         'address',
         'status',
+        'payment_method',
         'comment',
         'registered_at',
         'called_at',
