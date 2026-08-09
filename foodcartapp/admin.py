@@ -128,6 +128,15 @@ class OrderAdmin(admin.ModelAdmin):
         'phonenumber',
         'address',
     ]
+    fields = [
+        'firstname',
+        'lastname',
+        'phonenumber',
+        'address',
+        'status',
+        'comment',
+        ]
+
 
     def response_change(self, request, obj):
         next_url = request.GET.get('next')
