@@ -157,7 +157,7 @@ class Order(models.Model):
     firstname = models.CharField('имя', max_length=50)
     lastname = models.CharField('фамилия', max_length=50)
     phonenumber = PhoneNumberField('телефон', db_index=True)
-    address = models.CharField('адрes', max_length=200)
+    address = models.CharField('адрес', max_length=200)
     status = models.CharField(
         'статус',
         max_length=20,

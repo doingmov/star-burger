@@ -1,5 +1,3 @@
-import requests
-
 from django import forms
 from django.shortcuts import redirect, render
 from django.views import View
@@ -133,7 +131,6 @@ def view_orders(request):
     for menu_item in menu_items:
         restaurants_by_product[menu_item.product_id].add(menu_item.restaurant)
 
-    coordinates_cache = {}
     order_items = list(orders)
 
     for order in order_items:
