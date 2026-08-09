@@ -16,15 +16,21 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
 class OrderSerializer(serializers.ModelSerializer):
     products = OrderItemSerializer(many=True, allow_empty=False, write_only=True)
-    firstname = serializers.CharField()
-    lastname = serializers.CharField()
-    address = serializers.CharField()
 
     class Meta:
         model = Order
         fields = ['firstname', 'lastname', 'phonenumber', 'address', 'products']
 
-    def validate_firstname(self, value):
-        if not isinstance(value, str):
-            raise serializers.ValidationError('Имя должно быть строкой.')
-        return value
+    def create(self, validated_data):
+        products = validated_data.pop('products')
+        order = Order.objects.create(**validated_data)
+
+        OrderItem.objects.bulk_create([
+            OrderItem(
+                order=order,
+                product=item['product'],
+                quantity=item['quantity'],
+            )
+            for item in products
+        ])
+        return order
