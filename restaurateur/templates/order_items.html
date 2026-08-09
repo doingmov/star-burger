@@ -1,12 +1,9 @@
 {% extends 'base_restaurateur_page.html' %}
-
 {% block title %}Необработанные заказы | Star Burger{% endblock %}
-
 {% block content %}
   <center>
     <h2>Необработанные заказы</h2>
   </center>
-
   <hr/>
   <br/>
   <br/>
@@ -17,14 +14,15 @@
       <th>Клиент</th>
       <th>Телефон</th>
       <th>Адрес доставки</th>
+      <th>Сумма заказа</th>
     </tr>
-
-    {% for item in order_items %}
+    {% for order in order_items %}
       <tr>
-        <td>-</td>
-        <td>-</td>
-        <td>-</td>
-        <td>-</td>
+        <td>{{ order.id }}</td>
+        <td>{{ order.firstname }} {{ order.lastname }}</td>
+        <td>{{ order.phonenumber }}</td>
+        <td>{{ order.address }}</td>
+        <td>{{ order.total_price }} руб.</td>
       </tr>
     {% endfor %}
    </table>
