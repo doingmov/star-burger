@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from django.contrib import admin
 from django.shortcuts import reverse
 from django.templatetags.static import static
@@ -123,7 +125,8 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = [
         'id',
         'status',
-        'payment_method'
+        'payment_method',
+        'restaurant',
         'firstname',
         'lastname',
         'phonenumber',
@@ -137,11 +140,18 @@ class OrderAdmin(admin.ModelAdmin):
         'address',
         'status',
         'payment_method',
+        'restaurant',
         'comment',
         'registered_at',
         'called_at',
         'delivered_at',
         ]
+
+
+    def save_model(self, request, obj, form, change):
+        if obj.restaurant and obj.status == Order.STATUS_UNPROCESSED:
+            obj.status = Order.STATUS_COOKING
+        super().save_model(request, obj, form, change)
 
 
     def response_change(self, request, obj):
@@ -153,3 +163,19 @@ class OrderAdmin(admin.ModelAdmin):
         ):
             return redirect(next_url)
         return super().response_change(request, obj)
+
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == 'restaurant':
+            object_id = request.resolver_match.kwargs.get('object_id')
+            if object_id:
+                order = Order.objects.prefetch_related('items__product').get(pk=object_id)
+                menu_items = RestaurantMenuItem.objects.filter(availability=True).select_related('restaurant')
+                restaurants_by_product = defaultdict(set)
+                for menu_item in menu_items:
+                    restaurants_by_product[menu_item.product_id].add(menu_item.restaurant)
+                product_ids = {item.product_id for item in order.items.all()}
+                restaurant_sets = [restaurants_by_product.get(pid, set()) for pid in product_ids]
+                available = set.intersection(*restaurant_sets) if restaurant_sets else set()
+                kwargs['queryset'] = Restaurant.objects.filter(id__in=[r.id for r in available])
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
