@@ -16,8 +16,7 @@ from django.db.models import Case, When, Value, IntegerField
 
 from foodcartapp.models import Product, Restaurant, Order, RestaurantMenuItem
 from collections import defaultdict
-from .geocoder import fetch_coordinates
-
+from geocoding.services import get_or_create_place
 
 class Login(forms.Form):
     username = forms.CharField(
@@ -98,17 +97,11 @@ def view_restaurants(request):
     })
 
 
-def get_or_none_coordinates(address, cache):
-    if address in cache:
-        return cache[address]
-
-    try:
-        coordinates = fetch_coordinates(settings.YANDEX_GEOCODER_API_KEY, address)
-    except requests.exceptions.RequestException:
-        coordinates = None
-
-    cache[address] = coordinates
-    return coordinates
+def get_or_none_coordinates(address):
+    place = get_or_create_place(address)
+    if place is None:
+        return None
+    return place.lat, place.lon
 
 
 @user_passes_test(is_manager, login_url='restaurateur:login')
@@ -151,11 +144,11 @@ def view_orders(request):
         restaurant_sets = [restaurants_by_product.get(product_id, set()) for product_id in product_ids]
         available_restaurants = set.intersection(*restaurant_sets) if restaurant_sets else set()
 
-        order_coordinates = get_or_none_coordinates(order.address, coordinates_cache)
+        order_coordinates = get_or_none_coordinates(order.address)
 
         restaurants_with_distance = []
         for restaurant in available_restaurants:
-            restaurant_coordinates = get_or_none_coordinates(restaurant.address, coordinates_cache)
+            restaurant_coordinates = get_or_none_coordinates(restaurant.address)
             if order_coordinates and restaurant_coordinates:
                 order_distance = round(distance.distance(order_coordinates, restaurant_coordinates).km, 2)
             else:
