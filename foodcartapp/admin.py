@@ -127,6 +127,7 @@ class OrderAdmin(admin.ModelAdmin):
         'lastname',
         'phonenumber',
         'address',
+        'registered_at',
     ]
     fields = [
         'firstname',
@@ -135,6 +136,9 @@ class OrderAdmin(admin.ModelAdmin):
         'address',
         'status',
         'comment',
+        'registered_at',
+        'called_at',
+        'delivered_at',
         ]
 
 
