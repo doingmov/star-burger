@@ -19,7 +19,9 @@
     {% for order in order_items %}
       <tr>
         <td>
-          <a href="{% url 'admin:foodcartapp_order_change' object_id=order.id %}">{{ order.id }}</a>
+          <a href="{% url 'admin:foodcartapp_order_change' object_id=order.id %}?next={{ request.path|urlencode }}">
+            {{ order.id }}
+          </a>
         </td>
         <td>{{ order.id }}</td>
         <td>{{ order.firstname }} {{ order.lastname }}</td>
