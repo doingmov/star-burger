@@ -23,7 +23,9 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         products = validated_data.pop('products')
-        order = Order.objects.create(**validated_data)
+
+        with transaction.atomic():
+            order = Order.objects.create(**validated_data)
 
         OrderItem.objects.bulk_create([
             OrderItem(
