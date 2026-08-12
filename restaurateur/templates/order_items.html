@@ -18,14 +18,10 @@
       <th>Адрес доставки</th>
       <th>Сумма заказа</th>
       <th>Ресторан</th>
+      <th>Действия</th>
     </tr>
     {% for order in order_items %}
       <tr>
-        <td>
-          <a href="{% url 'admin:foodcartapp_order_change' object_id=order.id %}?next={{ request.path|urlencode }}">
-            {{ order.id }}
-          </a>
-        </td>
         <td>{{ order.id }}</td>
         <td>{{ order.get_status_display }}</td>
         <td>{{ order.get_payment_method_display }}</td>
@@ -44,7 +40,7 @@
                   <li>
                     {{ restaurant.name }}
                     {% if order_distance is not None %}
-                      -{{ order_distance}} км
+                      -{{ order_distance }} км
                     {% else %}
                       - не удалось определить расстояние
                     {% endif %}
@@ -53,6 +49,11 @@
               </ul>
             </details>
           {% endif %}
+        </td>
+        <td>
+          <a href="{% url 'admin:foodcartapp_order_change' object_id=order.id %}?next={{ request.path|urlencode }}">
+            Редактировать
+          </a>
         </td>
       </tr>
     {% endfor %}
