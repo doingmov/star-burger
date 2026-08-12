@@ -151,10 +151,17 @@ def view_orders(request):
         order_coordinates = coordinates_by_address.get(order.address)
         available_restaurants = orders_available_restaurants[order.id]
 
+        if order_coordinates is None:
+            order.address_not_found = True
+            order.restaurants_with_distance = []
+            continue
+
+        order.address_not_found = False
+
         restaurants_with_distance = []
         for restaurant in available_restaurants:
             restaurant_coordinates = coordinates_by_address.get(restaurant.address)
-            if order_coordinates and restaurant_coordinates:
+            if restaurant_coordinates:
                 order_distance = round(distance.distance(order_coordinates, restaurant_coordinates).km, 2)
             else:
                 order_distance = None

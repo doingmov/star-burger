@@ -32,6 +32,8 @@
         <td>
           {% if order.restaurant %}
             {{ order.restaurant.name }}
+          {% elif order.address_not_found%}
+            <strong>Адрес не найден</strong>
           {% else %}
             <details>
               <summary>Может приготовить</summary>
