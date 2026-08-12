@@ -169,7 +169,6 @@ class Order(models.Model):
         'способ оплаты',
         max_length=20,
         choices=PAYMENT_CHOICES,
-        default=PAYMENT_CASH,
         db_index=True,
     )
     comment = models.TextField('комментарий', blank=True)
